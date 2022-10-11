@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org/DTD config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- null 입력 전면 허용 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+	
+	<typeAliases>
+		<typeAlias type="com.topia.board.vo.Board" alias="board"/>
+		<typeAlias type="com.topia.board.vo.memo_member" alias="memomember"/>
+		<typeAlias type="com.topia.board.vo.memo_board" alias="memoboard"/>
+		<typeAlias type="com.topia.board.vo.memo_boardsch" alias="memoboardsch"/>
+		<typeAlias type="com.topia.board.vo.memo_membersch" alias="memomembersch"/>
+	</typeAliases>
+
+	
+</configuration>

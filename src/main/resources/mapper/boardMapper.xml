@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardDAO">
+	<select id="getboardlist" resultType="board" >
+		select a.*, rownum cnt
+		from (select * 
+		from board) a
+		where 1=1
+	</select>
+	
+	<select id="insertboard" parameterType="board" >
+		insert into board values(board_seq.nextval,#{writer},#{subject})
+	</select> 
+	
+	<select id="getboarddetail" parameterType="int" resultType="board">	
+	select *
+	from board
+	where no = #{no}
+	</select>
+	
+	<update id="updateboard" parameterType="board" >
+		UPDATE board 
+		SET writer=#{writer},
+			subject=#{subject}	
+		WHERE no= #{no}	
+	</update>
+	
+	<delete id="deleteboard" parameterType="int">
+		DELETE 
+		FROM board 
+		WHERE no = #{no}	
+	</delete>
+	<!-- 메모게시판 로그인 -->
+	<select id="memologin" resultType="memomember"  >	
+		select *
+		from member
+		where user_id = #{user_id}
+		and user_password = #{user_password}
+	</select>	
+	<!-- 회원가입 -->
+	<select id="joinmember" parameterType="memomember" >	
+		insert into member values(member_seq.nextval,#{user_id},#{user_password},#{user_name},#{user_address},#{user_birth},'USER')
+	</select>	
+	<!-- 메모게시판 전체개수 -->
+	<select id="memoboardtotcnt" parameterType="memoboardsch" resultType="int">	
+            select count(*)
+            from(
+                select rownum cnt , a.*
+                from
+				(select no, 
+                         title,
+                         content,
+                         content_reply,
+                         notice_yn,
+                         write_date,
+                         regist_date,
+                         regist_name,
+                         regist_id,
+                         regist_ip,
+                         update_date,
+                         update_id,
+                         update_ip
+                from memo_kjh
+                order by notice_yn desc, regist_date desc ) a )
+        where 1=1
+			<if test="selectresult != null and selectresult != ''">
+				<choose>
+					<when test="selectresult == 'title'">
+						 AND title LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'content'">
+						 AND content LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'regist_name'">
+						 AND regist_name LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'regist_id'">
+						 AND regist_id LIKE '%${inputresult}%'
+					</when>
+				</choose> 
+			</if>
+	</select>
+	
+	<!-- 메모게시판 -->
+	<select id="getmemoboardlist" resultType="memoboard" parameterType="memoboardsch">
+			select *
+			from (
+			        select rownum cnt , a.*
+			        from (
+			            select no, 
+			                    title,
+			                    content,
+			                    content_reply,
+			                    notice_yn,
+			                    write_date,
+			                    regist_date,
+			                    regist_name,
+			                    regist_id,
+			                    regist_ip,
+			                    update_date,
+			                    update_id,
+			                    update_ip
+			            from memo_kjh
+			<if test="selectresult != null and selectresult != ''">
+				<choose>
+					<when test="selectresult == 'title'">
+						 WHERE title LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'content'">
+						 WHERE content LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'regist_name'">
+						 WHERE regist_name LIKE '%${inputresult}%'
+					</when>
+					<when test="selectresult == 'regist_id'">
+						 WHERE regist_id LIKE '%${inputresult}%'
+					</when>
+				</choose> 
+			</if>
+		order by notice_yn desc, regist_date desc) a )
+    	WHERE cnt between #{start} and #{end}
+	</select>
+	<!-- 등록하기 -->
+	<insert id="insertmemoboard" parameterType="memoboard" >
+		insert into memo_kjh 
+			values(memo_kjh_seq.nextval,#{title},#{content},null,#{notice_yn},sysdate,
+                   #{regist_date}, null,#{regist_name},#{regist_id},null,#{regist_ip},null,#{user_no})
+	</insert>
+	<!-- 상세페이지 -->
+	<select id="detailmemoboard" parameterType="int" resultType="memoboard">	
+		select a.no,a.title,a.content,a.content_reply,a.notice_yn,
+		           a.write_date,m.user_no,a.regist_name,
+		            a.regist_date,
+		            a.update_date,
+		            a.regist_id,a.update_id,a.regist_ip,a.update_ip,m.user_name, rownum cnt
+		from memo_kjh a,member m
+        where 1=1
+        and m.user_no(+) = a.no
+        and a.no = #{no}
+	</select> 
+	<!-- 수정페이지 -->
+	<select id="updatememoboard" parameterType="int" resultType="memoboard">	
+		select a.no,a.title,a.content,a.content_reply,a.notice_yn,
+		           a.write_date,m.user_no,a.regist_name,
+		            a.regist_date,
+		            a.update_date,
+		            a.regist_id,a.update_id,a.regist_ip,a.update_ip,m.user_name, rownum cnt
+		from memo_kjh a,member m
+        where 1=1
+        and m.user_no(+) = a.no
+        and a.no = #{no}
+	</select>
+	<!-- 수정페이지 처리-->	
+	<update id="updatememoboardupt" parameterType="memoboard" >
+		UPDATE memo_kjh 
+		SET update_id=#{update_id},
+			title=#{title},	
+			regist_date=#{regist_date},	
+			content=#{content},	
+			content_reply=#{content_reply},
+			update_ip=#{update_ip},
+			update_date=sysdate,
+			notice_yn=#{notice_yn}
+		WHERE no= #{no}	
+	</update>
+	<!-- 수정페이지 삭제처리-->
+	<delete id="deletememoboard" parameterType="int">
+		DELETE 
+		FROM memo_kjh 
+		WHERE no = #{no}	
+	</delete>
+	
+	<delete id="ckeckdelete" parameterType="String">
+		DELETE 
+		FROM memo_kjh 
+		WHERE no = #{no}	
+	</delete>
+	<!-- 회원정보 수정처리 -->
+	<update id="updatemember" parameterType="memomember" >
+		UPDATE member 
+		SET user_name=#{user_name},
+			user_address=#{user_address},	
+			user_birth=#{user_birth}
+		WHERE user_no= #{user_no}	
+	</update>
+	<!-- 회원정보 리스트 -->
+	<select id="getmemomemberlist" resultType="memomember" parameterType="memomembersch">
+		select *
+		from (
+			select rownum cnt,a.*
+			from (	
+				select *
+				from member
+				where 1=1
+					<if test="selectresult != null and selectresult != ''">
+						<choose>
+							<when test="selectresult == 'user_id'">
+								 AND user_id LIKE '%${inputresult}%'
+							</when>
+							<when test="selectresult == 'user_name'">
+								 AND user_name LIKE '%${inputresult}%'
+							</when>
+							<when test="selectresult == 'user_address'">
+								 AND user_address LIKE '%${inputresult}%'
+							</when>
+						</choose> 
+					</if>
+				order by user_no asc) a )
+				WHERE cnt between #{start} and #{end}
+	</select>
+	<!-- 회원정보 개수 -->	
+	<select id="getmemomemberlisttotcnt" resultType="int" parameterType="memomembersch">
+		select count(*)
+		from (
+			select rownum cnt,a.*
+			from (	
+				select *
+				from member
+				WHERE 1=1
+				order by user_no asc) a )
+					<if test="selectresult != null and selectresult != ''">
+						<choose>
+							<when test="selectresult == 'user_id'">
+								 AND user_id LIKE '%${inputresult}%'
+							</when>
+							<when test="selectresult == 'user_name'">
+								 AND user_name LIKE '%${inputresult}%'
+							</when>
+							<when test="selectresult == 'user_address'">
+								 AND user_address LIKE '%${inputresult}%'
+							</when>
+						</choose> 
+					</if>
+	</select>
+	<!-- 회원정보 상세페이지 -->
+	<select id="detailmemomember" parameterType="int" resultType="memomember">	
+		select *
+		from member
+		where user_no = #{user_no}
+	</select> 
+	<!-- 회원정보 상세페이지 삭제처리 -->
+	<delete id="deletememomember" parameterType="int">
+		DELETE 
+		FROM member
+		WHERE user_no = #{user_no}	
+	</delete>
+	<!-- 회원정보 권한 수정처리 -->
+	<update id="updatememberSts" parameterType="memomember" >
+		UPDATE member 
+		SET user_status = #{user_status}
+		WHERE user_no = #{user_no}	
+	</update>
+	<!-- 회원정보 체크삭제 -->
+	<delete id="ckeckmemberdelete" parameterType="String">
+		DELETE 
+		FROM member
+		WHERE user_no = #{user_no}
+	</delete>
+</mapper>
