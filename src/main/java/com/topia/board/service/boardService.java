@@ -52,4 +52,8 @@ public interface boardService {
 	public Integer updatememberSts(memo_member upt);
 	// memo 회원리스트 선택삭제처리
 	public int ckeckmemberdelete(String user_no);
+	// memo 아이디중복처리
+	public int overlappedID(memo_member ck);
+	// memo 비밀번호 중복처리	
+	public int overlappedPass(memo_member ck);
 }

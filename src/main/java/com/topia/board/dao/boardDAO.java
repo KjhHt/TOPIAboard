@@ -107,5 +107,12 @@ public class boardDAO {
 	public int ckeckmemberdelete(String user_no) {
 		return tpl.delete("boardDAO.ckeckmemberdelete",user_no);
 	}
-	
+	// memo 회원가입 아이디중복처리
+	public int overlappedID(memo_member ck) {
+		return tpl.selectOne("boardDAO.overlappedID",ck);
+	}
+	// memo 정보수정 비밀번호 중복처리
+	public int overlappedPass(memo_member ck) {
+		return tpl.selectOne("boardDAO.overlappedPass",ck);
+	}	
 }

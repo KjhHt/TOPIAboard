@@ -43,7 +43,8 @@
 	</select>	
 	<!-- 회원가입 -->
 	<select id="joinmember" parameterType="memomember" >	
-		insert into member values(member_seq.nextval,#{user_id},#{user_password},#{user_name},#{user_address},#{user_birth},'USER')
+		insert into member values(member_seq.nextval,#{user_id},#{user_password},
+			#{user_name},#{user_address},#{user_birth},'USER',#{user_email},#{user_addressno},#{user_addressdetail} )
 	</select>	
 	<!-- 메모게시판 전체개수 -->
 	<select id="memoboardtotcnt" parameterType="memoboardsch" resultType="int">	
@@ -184,7 +185,8 @@
 		UPDATE member 
 		SET user_name=#{user_name},
 			user_address=#{user_address},	
-			user_birth=#{user_birth}
+			user_birth=#{user_birth},
+			user_email=#{user_email}
 		WHERE user_no= #{user_no}	
 	</update>
 	<!-- 회원정보 리스트 -->
@@ -207,6 +209,9 @@
 							<when test="selectresult == 'user_address'">
 								 AND user_address LIKE '%${inputresult}%'
 							</when>
+							<when test="selectresult == 'user_eamil'">
+								 AND user_eamil LIKE '%${inputresult}%'
+							</when>
 						</choose> 
 					</if>
 				order by user_no asc) a )
@@ -222,6 +227,7 @@
 				from member
 				WHERE 1=1
 				order by user_no asc) a )
+				WHERE 1=1
 					<if test="selectresult != null and selectresult != ''">
 						<choose>
 							<when test="selectresult == 'user_id'">
@@ -232,6 +238,9 @@
 							</when>
 							<when test="selectresult == 'user_address'">
 								 AND user_address LIKE '%${inputresult}%'
+							</when>
+							<when test="selectresult == 'user_email'">
+								 AND user_email LIKE '%${inputresult}%'
 							</when>
 						</choose> 
 					</if>
@@ -260,4 +269,19 @@
 		FROM member
 		WHERE user_no = #{user_no}
 	</delete>
+	<!-- 아이디 중복확인 -->
+	<select id="overlappedID" parameterType="memomember" resultType="int">
+		SELECT COUNT(user_id)
+		FROM member 
+		WHERE user_id=#{user_id}
+	</select>
+	<!-- 비밀번호 중복확인 -->
+	<select id="overlappedPass" parameterType="memomember" resultType="int">
+		SELECT COUNT(user_password)
+		FROM member 
+		WHERE user_password=#{user_password}
+		AND user_no = #{user_no}
+	</select>	
+	
+	
 </mapper>

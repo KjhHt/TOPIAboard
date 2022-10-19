@@ -84,7 +84,6 @@ public class HomeController {
 		return "memo//memo_login";
 	}
 	// 로그인 체크
-	
 	@ResponseBody
 	@RequestMapping(value = "/loginCheck")
 	public String loginCheck(@ModelAttribute memo_member member) throws Exception {
@@ -97,7 +96,6 @@ public class HomeController {
 		}
 		return result;
 	}
-	
 	// 로그아웃
 	@RequestMapping(value = "/logout")
 	public String logout(memo_member m, HttpServletRequest request) {
@@ -109,6 +107,7 @@ public class HomeController {
 	@RequestMapping(value = "/jmember")
 	public String joinmember(Model model,memo_member member) {
 		service.memberjoin(member);
+		
 		model.addAttribute("isInsert","Y");
 		return "memo//memo_joinmember";
 	}
@@ -200,7 +199,7 @@ public class HomeController {
 	// 메모 회원정보리스트 상세페이지
 	@RequestMapping(value = "/memberdetail")
 	public String memberdetail(@RequestParam("user_no") int user_no,Model model) {
-		model.addAttribute("mem",service.detailmemomember(user_no));
+		model.addAttribute("mem2",service.detailmemomember(user_no));
 		return "memo/memo_memberdetail";
 	}
 	// 메모 회원정보리스트 상세페이지 삭제버튼
@@ -228,5 +227,28 @@ public class HomeController {
 			service.ckeckmemberdelete(ajaxMsg[i]);
 		}
 		return "redirect:memberlist";
+	}
+	
+	//test
+	@RequestMapping(value = "/testtest")
+	public String memberdetail() {
+		//model.addAttribute("mem2",service.detailmemomember(user_no));
+		return "memo/test";
+	}
+	
+	// 아이디 중복확인 처리
+	@ResponseBody // 값 변환
+	@RequestMapping(value = "/idcheck")
+	public int overlappedID(memo_member ck) {
+		int ck2 = service.overlappedID(ck);
+		return ck2;
+	}
+	
+	// 비밀번호 중복확인 처리
+	@ResponseBody // 값 변환
+	@RequestMapping(value = "/passcheck")
+	public int overlappedPass(memo_member ck) {
+		int ck3 = service.overlappedPass(ck);
+		return ck3;
 	}
 }

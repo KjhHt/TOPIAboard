@@ -211,8 +211,20 @@ public class boardServiceImpl implements boardService {
 	public Integer updatememberSts(memo_member upt) {
 		return dao.updatememberSts(upt);
 	}
+	// 회원관리 선택삭제
 	@Override
 	public int ckeckmemberdelete(String user_no) {
 		return dao.ckeckmemberdelete(user_no);
 	}
+	// 아이디 중복처리
+	@Override
+	public int overlappedID(memo_member ck) {
+		return dao.overlappedID(ck);
+	}
+
+	// 비밀번호 중복처리
+	@Override
+	public int overlappedPass(memo_member ck) {
+		return dao.overlappedPass(ck);
+	}	
 }

@@ -8,9 +8,12 @@ public class memo_member {
 	private String user_id;
 	private String user_password;
 	private String user_name;
+	private String user_addressno;
 	private String user_address;
+	private String user_addressdetail;
 	private Date user_birth;
 	private String user_status;
+	private String user_email;
 	
 	public int getUser_no() {
 		return user_no;
@@ -60,5 +63,24 @@ public class memo_member {
 	public void setCnt(int cnt) {
 		this.cnt = cnt;
 	}
+	public String getUser_email() {
+		return user_email;
+	}
+	public void setUser_email(String user_email) {
+		this.user_email = user_email;
+	}
+	public String getUser_addressno() {
+		return user_addressno;
+	}
+	public void setUser_addressno(String user_addressno) {
+		this.user_addressno = user_addressno;
+	}
+	public String getUser_addressdetail() {
+		return user_addressdetail;
+	}
+	public void setUser_addressdetail(String user_addressdetail) {
+		this.user_addressdetail = user_addressdetail;
+	}
+	
 	
 }
